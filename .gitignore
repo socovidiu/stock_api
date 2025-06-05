@@ -1,0 +1,38 @@
+# Virtual environment folders
+venv/
+.venv/
+myvenv/
+env/
+
+# PyCharm project files
+.idea/
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs and runtime files
+*.log
+*.sqlite3
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Jupyter or notebook checkpoints (if you ever use them)
+.ipynb_checkpoints/
+
+
+# Test/report artifacts
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Mac-specific
+*.DS_Store
