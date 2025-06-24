@@ -41,7 +41,7 @@ This project is a FastAPI-based backend service that provides stock-related insi
 ├── .env                      # API keys and secrets
 ├── requirements.txt
 ├── README.md
-
+```
 ## Using stock_api
 
 To use stock_api, follow these steps:
