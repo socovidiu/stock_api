@@ -41,3 +41,22 @@ This project is a FastAPI-based backend service that provides stock-related insi
 ├── .env                      # API keys and secrets
 ├── requirements.txt
 ├── README.md
+
+## Using stock_api
+
+To use stock_api, follow these steps:
+
+Requirements installation:
+```
+pip install -r requirements.txt
+```
+Create .env file
+```
+ALPHA_NEWS_KEY=your_alpha_vantage_api_key
+```
+
+Running the App:
+```
+uvicorn app.main:app --reload
+```
+
