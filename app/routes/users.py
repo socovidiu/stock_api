@@ -11,18 +11,12 @@ Routes:
 
 from fastapi import APIRouter
 from pydantic import BaseModel
+from app.services.users_service import Users
+from app.models.user import User
 
 router = APIRouter()
 
-class User(BaseModel):
-    """
-    Data model representing a user.
-    """
-    username: str
-    email: str
-
-# In-memory "database" for demonstration
-fake_users_db = {}
+user_service = Users()
 
 @router.post("/")
 def create_user(user: User):
@@ -39,10 +33,8 @@ def create_user(user: User):
     dict
         A success message with user data, or an error if the user already exists.
     """
-    if user.username in fake_users_db:
-        return {"error": "User already exists"}
-    fake_users_db[user.username] = user
-    return {"message": "User created", "user": user}
+    return user_service.create_user(user.username, user.email)
+
 
 @router.get("/{username}")
 def get_user(username: str):
@@ -59,7 +51,4 @@ def get_user(username: str):
     dict or User
         The user data if found, otherwise an error message.
     """
-    user = fake_users_db.get(username)
-    if user:
-        return user
-    return {"error": "User not found"}
+    return users_service.get_user(username)
