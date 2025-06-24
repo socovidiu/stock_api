@@ -60,3 +60,7 @@ Running the App:
 uvicorn app.main:app --reload
 ```
 
+Visit the interactive API docs at:
+```
+📍 http://127.0.0.1:8000/docs
+```
