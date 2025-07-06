@@ -36,3 +36,7 @@ build/
 
 # Mac-specific
 *.DS_Store
+
+# Ignore Sphinx build output
+docs/build/
+docs/_build/
