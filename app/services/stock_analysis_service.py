@@ -1,38 +1,88 @@
 """
-Stock Analysis Service
+Stock Analysis Service Module
 
-Handles market trend analysis, SMA data retrieval, and trade recommendations
-using an injected stock data provider.
+This module defines the StockAnalysisService class, which provides methods
+for analyzing market trends and generating trading recommendations using
+technical indicators and news sentiment data.
+
+The service relies on an injected data provider that implements the
+StockDataProvider interface.
 """
-import logging
-from app.services.providers.base import StockDataProvider
-from typing import Union, Dict, List
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from typing import Union, Dict
+from app.services.providers.base import StockDataProvider
 
 class StockAnalysisService:
+    """
+    A service for performing stock market trend analysis and providing trade recommendations.
+
+    Attributes
+    ----------
+    provider : StockDataProvider
+        An injected data provider for retrieving technical indicators and sentiment data.
+    """
+
     def __init__(self, provider: StockDataProvider):
+        """
+        Initialize the analysis service with a stock data provider.
+
+        Parameters
+        ----------
+        provider : StockDataProvider
+            An instance of a provider implementing the StockDataProvider interface.
+        """
         self.provider = provider
 
     def get_sma(self, symbol: str, period: int = 20) -> Union[Dict, str]:
         """
-        Fetch the Simple Moving Average (SMA) for a stock.
+        Retrieve the Simple Moving Average (SMA) for a given stock.
 
-        Returns last few SMA values or an error message.
+        Parameters
+        ----------
+        symbol : str
+            Stock ticker symbol.
+        period : int, optional
+            Number of days for the SMA period (default is 20).
+
+        Returns
+        -------
+        dict or str
+            Dictionary containing SMA values or an error message.
         """
         return self.provider.get_sma(symbol, period)
 
     def get_rsi(self, symbol: str, period: int = 14):
+        """
+        Retrieve the Relative Strength Index (RSI) for a given stock.
+
+        Parameters
+        ----------
+        symbol : str
+            Stock ticker symbol.
+        period : int, optional
+            Number of days for the RSI period (default is 14).
+
+        Returns
+        -------
+        float or None
+            RSI value, or None if unavailable.
+        """
         return self.provider.get_rsi(symbol, period)
 
     def analyze_trend(self, symbol: str) -> str:
         """
-        Analyze market trend using RSI, MACD, and Bollinger Bands.
+        Analyze the current market trend using RSI, MACD, and Bollinger Bands.
 
-        Returns:
+        Parameters
+        ----------
+        symbol : str
+            Stock ticker symbol.
+
+        Returns
         -------
-        str: One of "strong uptrend", "uptrend", "sideways", "downtrend", "strong downtrend", or "unknown"
+        str
+            One of "strong uptrend", "uptrend", "sideways", "downtrend",
+            "strong downtrend", or "unknown".
         """
         rsi = self.provider.get_rsi(symbol)
         macd = self.provider.get_macd(symbol)
@@ -46,7 +96,7 @@ class StockAnalysisService:
         # RSI: Overbought/Oversold
         if rsi < 30:
             trend_score += 1  # Bullish
-        elif rsi > 70:
+        if rsi > 70:
             trend_score -= 1  # Bearish
 
         # MACD Signal
@@ -63,51 +113,47 @@ class StockAnalysisService:
 
         # Final classification
         if trend_score >= 2:
-            return "strong uptrend"
+            trend_result = "strong uptrend"
         elif trend_score == 1:
-            return "uptrend"
+            trend_result = "uptrend"
         elif trend_score == 0:
-            return "sideways"
+            trend_result = "sideways"
         elif trend_score == -1:
-            return "downtrend"
+            trend_result = "downtrend"
         else:
-            return "strong downtrend"
+            trend_result = "strong downtrend"
+
+        return trend_result
 
     def recommend_action(self, symbol: str) -> str:
         """
-        Generate a stock recommendation based on technical trend and sentiment.
+        Generate a stock recommendation based on trend analysis and sentiment.
 
-        Combines:
-        - Technical analysis (MACD, RSI, Bollinger Bands) via `analyze_trend()`
-        - News sentiment (positive vs negative mentions)
+        Combines technical trend indicators and sentiment analysis to classify
+        the recommendation as "BUY", "SELL", or "HOLD".
 
-        Returns:
+        Parameters
+        ----------
+        symbol : str
+            Stock ticker symbol.
+
+        Returns
         -------
-        str: "BUY", "SELL", or "HOLD"
+        str
+            Recommendation string: "BUY", "SELL", or "HOLD".
         """
         trend = self.analyze_trend(symbol)
         news = self.provider.get_news_sentiment(symbol)
 
-        logger.info(f"[{symbol}] Trend analysis result: {trend}")
-
         if isinstance(news, dict) and "error" in news:
-            logger.warning(f"[{symbol}] Failed to fetch sentiment data: {news}")
             return "HOLD"
 
-        # Sentiment analysis
         positive = sum(1 for n in news if n["sentiment"] == "positive")
         negative = sum(1 for n in news if n["sentiment"] == "negative")
         sentiment_score = positive - negative
 
-        logger.info(f"[{symbol}] Sentiment score: +{positive} / -{negative} → net: {sentiment_score}")
-
-        # Final recommendation
         if trend in ["strong uptrend", "uptrend"] and sentiment_score > 0:
-            recommendation = "BUY"
-        elif trend in ["strong downtrend", "downtrend"] and sentiment_score < 0:
-            recommendation = "SELL"
-        else:
-            recommendation = "HOLD"
-
-        logger.info(f"[{symbol}] Final recommendation: {recommendation}")
-        return recommendation
+            return "BUY"
+        if trend in ["strong downtrend", "downtrend"] and sentiment_score < 0:
+            return "SELL"
+        return "HOLD"

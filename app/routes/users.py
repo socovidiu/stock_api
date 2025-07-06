@@ -10,13 +10,11 @@ Routes:
 """
 
 from fastapi import APIRouter
-from pydantic import BaseModel
-from app.services.users_service import Users
+from app.services.users_service import UsersService
 from app.models.user import User
 
 router = APIRouter()
-
-user_service = Users()
+userService = UsersService()
 
 @router.post("/")
 def create_user(user: User):
@@ -33,7 +31,7 @@ def create_user(user: User):
     dict
         A success message with user data, or an error if the user already exists.
     """
-    return user_service.create_user(user.username, user.email)
+    return userService.create_user(user)
 
 
 @router.get("/{username}")
@@ -51,4 +49,4 @@ def get_user(username: str):
     dict or User
         The user data if found, otherwise an error message.
     """
-    return users_service.get_user(username)
+    return userService.get_user(username)

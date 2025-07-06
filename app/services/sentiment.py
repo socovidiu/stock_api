@@ -42,7 +42,7 @@ def analyze_sentiment(text: str) -> str:
 
     if sentiment_score > 0.1:
         return "positive"
-    elif sentiment_score < -0.1:
+    if sentiment_score < -0.1:
         return "negative"
-    else:
-        return "neutral"
+
+    return "neutral"

@@ -5,8 +5,9 @@ This module initializes the FastAPI app, registers route modules,
 and provides a root endpoint for the Stock Sentiment Analysis API.
 
 Modules:
-- app.routes.stock  → Handles stock news and recommendations
-- app.routes.users  → Handles basic user operations
+--------
+    app.routes.stock  → Handles stock news and recommendations
+    app.routes.users  → Handles basic user operations
 """
 
 from fastapi import FastAPI
@@ -45,7 +46,7 @@ def read_root():
     Root endpoint to verify that the API is running.
 
     Returns:
-    -------
+    --------
     dict
         A welcome message.
     """

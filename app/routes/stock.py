@@ -7,7 +7,6 @@ This module defines API endpoints related to stock market data, including:
 - Providing trade recommendations based on market trends and sentiment
 
 Routes:
--------
 - GET /stock/news/{stock_symbol}
     → News with sentiment analysis for the given stock symbol
 
