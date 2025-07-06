@@ -25,7 +25,7 @@ def analyze_sentiment(text: str) -> str:
     Analyzes the sentiment of a given text using NLTK's VADER sentiment analyzer.
 
     Parameters:
-    ----------
+    -----------
     text : str
         The input string to analyze (e.g., news headline, tweet, comment)
 
